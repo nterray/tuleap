@@ -142,9 +142,9 @@ class BrowserIDPlugin extends Plugin {
         $result = curl_exec($ch);
         curl_close($ch);
 
-        $result = json_decode($result);
-        if ($result->status === 'okay') {
-            return $result;
+        $json_result = json_decode($result);
+        if ($json_result->status === 'okay') {
+            return $json_result;
         }
     }
 }
