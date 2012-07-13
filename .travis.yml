@@ -2,5 +2,9 @@ language: php
 php:
     - 5.3
     - 5.4
+before_install:
+    - sudo echo "deb http://mozware.free.fr/tuleap/debian/ squeeze main contrib non-free" >> /etc/apt/sources.list
+    - sudo apt-get install libphp-jpgraph-tuleap
+#http://ci.tuleap.net/yum/tuleap/dev/x86_64/jpgraph-tuleap-2.3.4-1.noarch.rpm
 script: CODENDI_LOCAL_INC=$PWD/src/etc/local.inc.dist make test
 
