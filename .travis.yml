@@ -8,10 +8,6 @@ before_script:
     - pear install Mail_mimeDecode
     - sed -i "s#/etc#$PWD#" $PWD/src/etc/local.inc.dist
     - mkdir -p $PWD/codendi/plugin/IM/etc/
-    - cp $PWD/plugins/IM/include/jabbex_api/installation/resources/jabbex_conf.tpl.xml $PWD/codendi/plugin/IM/etc/jabbex_conf.xml
-    - echo "$PWD/codendi/plugin/IM/etc/jabbex_conf.xml"
-    - ls -la
-    - cat $PWD/plugins/IM/include/jabbex_api/installation/resources/jabbex_conf.tpl.xml
-    - cat /home/vagrant/builds/nterray/tuleap/codendi/plugins/IM/etc/jabbex_conf.xml
+    - cp $PWD/plugins/IM/include/jabbex_api/installation/resources/jabbex_conf.tpl.xml $PWD/codendi/plugins/IM/etc/jabbex_conf.xml
 script: CODENDI_LOCAL_INC=$PWD/src/etc/local.inc.dist make test
 
