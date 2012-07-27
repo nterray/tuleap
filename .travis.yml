@@ -5,9 +5,7 @@ php:
 before_script:
     - wget http://mozware.free.fr/tuleap/debian/pool/non-free/j/jpgraph/libphp-jpgraph-tuleap_2.3.4-1_all.deb
     - sudo dpkg -i --force-all libphp-jpgraph-tuleap_2.3.4-1_all.deb
-    - locate jpgraph
     - pear install Mail_mimeDecode
     - sed -i "s#/etc#$PWD#" $PWD/src/etc/local.inc.dist
-    - sed -i "s#usr/share/jpgraph##"
 script: CODENDI_LOCAL_INC=$PWD/src/etc/local.inc.dist make test
 
