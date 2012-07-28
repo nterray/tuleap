@@ -13,7 +13,5 @@ before_script:
     - mkdir -p $PWD/codendi/plugins/IM/etc/
     - cp $PWD/plugins/IM/include/jabbex_api/installation/resources/jabbex_conf.tpl.xml $PWD/codendi/plugins/IM/etc/jabbex_conf.xml
     - phpenv rehash
-    - php --ini
-    - php -r 'echo get_include_path();'
-script: CODENDI_LOCAL_INC=$PWD/src/etc/local.inc.dist php -d include_path="src/www/include:/usr/share/pear:$PWD/Zend:src:." -d memory_limit=196M tests/bin/simpletest -x tests/simpletest plugins
+script: CODENDI_LOCAL_INC=$PWD/src/etc/local.inc.dist php -d include_path="`php -r 'echo get_include_path();'`:$PWD/src/www/include:$PWD/Zend:$PWD/src" -d memory_limit=196M tests/bin/simpletest -x tests/simpletest plugins
 
