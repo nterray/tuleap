@@ -3,12 +3,14 @@ php:
     - 5.3
     - 5.4
 before_script:
-    - sudo apt-get install php-zendframework
+    - wget http://framework.zend.com/releases/ZendFramework-1.8.1/ZendFramework-1.8.1-minimal.tar.gz
+    - tar -xzf ZendFramework-1.8.1-minimal.tar.gz
+    - mv ZendFramework-1.8.1-minimal Zend
     - wget http://mozware.free.fr/tuleap/debian/pool/non-free/j/jpgraph/libphp-jpgraph-tuleap_2.3.4-1_all.deb
     - sudo dpkg -i --force-all libphp-jpgraph-tuleap_2.3.4-1_all.deb
     - pear install Mail_mimeDecode
     - sed -i "s#/etc#$PWD#" $PWD/src/etc/local.inc.dist
     - mkdir -p $PWD/codendi/plugins/IM/etc/
     - cp $PWD/plugins/IM/include/jabbex_api/installation/resources/jabbex_conf.tpl.xml $PWD/codendi/plugins/IM/etc/jabbex_conf.xml
-script: CODENDI_LOCAL_INC=$PWD/src/etc/local.inc.dist make test
+script: CODENDI_LOCAL_INC=$PWD/src/etc/local.inc.dist php -d include_path="src/www/include:i$PWD/Zend:src:." -d memory_limit=196M tests/bin/simpletest -x tests/simpletest plugins
 
