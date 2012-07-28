@@ -64,6 +64,8 @@ class Tracker_HierarchyFactory {
      * We should usually prefer dependency injection over static methods, but
      * there are some cases in Tuleap legacy code where injection would require
      * a lot of refactoring (e.g. Tracker/FormElement).
+     * 
+     * @return Tracker_HierarchyFactory
      */
     public static function instance() {
         if (! self::$_instance) {
@@ -122,6 +124,16 @@ class Tracker_HierarchyFactory {
         return $hierarchy;
     }
 
+    /**
+     * Return the parent artifact
+     *
+     * @param User $user
+     * @param Tracker_Artifact $child
+     *
+     * @throws Tracker_Hierarchy_MoreThanOneParentException
+     *
+     * @return null| Tracker_Artifact
+     */
     public function getParentArtifact(User $user, Tracker_Artifact $child) {
         $dar = $this->hierarchy_dao->getParentsInHierarchy($child->getId());
         if ($dar && !$dar->isError()) {
@@ -131,26 +143,55 @@ class Tracker_HierarchyFactory {
                 case 1:
                     return $this->artifact_factory->getInstanceFromRow($dar->getRow());
                 default:
-                    $parent_ids = array();
+                    $parents = array();
                     foreach ($dar as $row) {
-                        $parent_ids[] = $row['id'];
+                        $parents[] = $this->artifact_factory->getInstanceFromRow($row);
                     }
-                    throw new Tracker_Hierarchy_MoreThanOneParentException($child->getId(), $parent_ids);
+                    throw new Tracker_Hierarchy_MoreThanOneParentException($child, $parents);
             }
         }
         return null;
     }
 
-    public function getAllAncestors(User $user, Tracker_Artifact $child) {
+    /**
+     * Return all hierarchy of parents of an artifact
+     *
+     * @param User $user
+     * @param Tracker_Artifact $child
+     * @param array $stack (purly internal for recursion, should not be used
+     *
+     * @return Array of Tracker_Artifact
+     */
+    public function getAllAncestors(User $user, Tracker_Artifact $child, array &$stack = array()) {
         $parent = $this->getParentArtifact($user, $child);
-        if ($parent === null) {
+        if ($parent === null || $parent->getId() == $child->getId() || isset($stack[$parent->getId()])) {
             return array();
         } else {
-            return array_merge(array($parent), $this->getAllAncestors($user, $parent));
+            $stack[$parent->getId()] = true;
+            return array_merge(array($parent), $this->getAllAncestors($user, $parent, $stack));
         }
     }
 
-    /*
+    /**
+     * Get artifacts that share the same parent than given artifact
+     *
+     * @param User $user
+     * @param Tracker_Artifact $artifact
+     *
+     * @return Array of Tracker_Artifact
+     */
+    public function getSiblings(User $user, Tracker_Artifact $artifact) {
+        $siblings = array();
+        $parent   = $this->getParentArtifact($user, $artifact);
+        if ($parent) {
+            foreach ($parent->getHierarchyLinkedArtifacts($user) as $child) {
+                $siblings[] = $child;
+            }
+        }
+        return $siblings;
+    }
+
+    /**
      * Duplicate a tracker hierarchy
      * 
      * @param Array   $tracker_mapping the trackers mapping during project creation based on a template

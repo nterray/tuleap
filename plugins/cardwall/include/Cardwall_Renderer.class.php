@@ -56,7 +56,7 @@ class Cardwall_Renderer extends Tracker_Report_Renderer {
      * @param int    $field_id       the field id
      * @param bool   $enable_qr_code Display the QR code to ease usage of tablets
      */
-    public function __construct(Plugin $plugin, Cardwall_OnTop_Config $config,
+    public function __construct(Plugin $plugin, Cardwall_OnTop_IConfig $config,
                                 $id, $report, $name, $description, $rank, $field_id, $enable_qr_code) {
         parent::__construct($id, $report, $name, $description, $rank);
         $this->plugin         = $plugin;
@@ -143,12 +143,14 @@ class Cardwall_Renderer extends Tracker_Report_Renderer {
         $redirect_parameter = 'cardwall[renderer]['. $this->report->id .']='. $this->id;
         
         $field              = $this->getField();
+        
         if (! $field) {
-            $board = new Cardwall_Board(array(), array(), new Cardwall_MappingCollection());
+            $board = new Cardwall_Board(array(), new Cardwall_OnTop_Config_ColumnCollection(), new Cardwall_MappingCollection());
         } else {
             $board_factory      = new Cardwall_BoardFactory();
             $field_retriever    = new Cardwall_FieldProviders_CustomFieldRetriever($field);
-            $board              = $board_factory->getBoard($field_retriever, $field, $forest_of_artifacts, $this->config);
+            $columns            = $this->config->getRendererColumns($field);
+            $board              = $board_factory->getBoard($field_retriever, $columns, $forest_of_artifacts, $this->config);
         }
 
         return new Cardwall_RendererPresenter($board, $this->getQrCode(), $redirect_parameter, $field, $form);

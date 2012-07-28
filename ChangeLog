@@ -1,14 +1,36 @@
-Version 5.3 (not released yet)
+Version 5.4 (Not released yet)
+	== Bug fix ==
+	* Fix typo in french translation.
+
 	== Plugins ==
-	* Agildashboard: 0.43
-	* Cardwall: 0.5.11
-	* Docman: 2.26
+	* Agiledashboard: 0.46
+	* Tracker: 5.8.10
+	* Cardwall: 0.9.2
+	* Test: 5.2
+
+Version 5.3.1 (Monday, July 23rd 2012)
+	== Plugins ==
+	* Docman 2.26.2
+	* Tracker: 5.8.7
+
+	== Bug fix ==
+	* Fix bug on user SSH key dump on filesystem (didn't take case into account and process context was not restored).
+	* Fix warning on Subversion conf serialization.
+
+Version 5.3 (Thursday, July 19th 2012)
+	== Plugins ==
+	* Agildashboard: 0.45
+	* Cardwall: 0.9.1
+	* Docman: 2.26.1
 	* FullTextSearch: 0.6
 	* Git: 2.6.3
 	* LDAP: 3.16
 	* Test: 5.1
-	* Tracker: 5.8.2
+	* Tracker: 5.8.6
 	* GraphOnTrackerv5 5.0.2
+
+	== Enhancement ==
+   * Documentation update (remove references to old screenshots).
 
 	== Development ==
 	Update mustache renderer
