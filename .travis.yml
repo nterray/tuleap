@@ -3,6 +3,7 @@ php:
     - 5.3
     - 5.4
 before_script:
+    - sudo apt-get install php-zendframework
     - wget http://mozware.free.fr/tuleap/debian/pool/non-free/j/jpgraph/libphp-jpgraph-tuleap_2.3.4-1_all.deb
     - sudo dpkg -i --force-all libphp-jpgraph-tuleap_2.3.4-1_all.deb
     - pear install Mail_mimeDecode
