@@ -6,7 +6,6 @@ before_script:
     - wget http://framework.zend.com/releases/ZendFramework-1.8.1/ZendFramework-1.8.1-minimal.tar.gz
     - tar -xzf ZendFramework-1.8.1-minimal.tar.gz
     - mv ZendFramework-1.8.1-minimal/library/Zend Zend
-    - ls -la $PWD/Zend/
     - wget http://mozware.free.fr/tuleap/debian/pool/non-free/j/jpgraph/libphp-jpgraph-tuleap_2.3.4-1_all.deb
     - sudo dpkg -i --force-all libphp-jpgraph-tuleap_2.3.4-1_all.deb
     - pear install Mail_mimeDecode
