@@ -31,8 +31,6 @@ class BrowserIDPlugin extends Plugin {
     function __construct($id) {
         parent::__construct($id);
         $this->setScope(self::SCOPE_PROJECT);
-        $this->_addHook('site_admin_option_hook', 'site_admin_option_hook', false);
-        $this->_addHook('cssfile', 'cssfile', false);
         $this->_addHook('javascript_file', 'jsFile', false);
     }
 
@@ -45,18 +43,6 @@ class BrowserIDPlugin extends Plugin {
             $this->pluginInfo = new BrowserIDPluginInfo($this);
         }
         return $this->pluginInfo;
-    }
-    
-    function site_admin_option_hook($params) {
-        echo '<li><a href="'.$this->getPluginPath().'/">BrowserID</a></li>';
-    }
-    
-    function cssfile($params) {
-        // Only show the stylesheet if we're actually in the BrowserID pages.
-        // This stops styles inadvertently clashing with the main site.
-        if (strpos($_SERVER['REQUEST_URI'], $this->getPluginPath()) === 0) {
-            echo '<link rel="stylesheet" type="text/css" href="'.$this->getThemePath().'/css/style.css" />';
-        }
     }
 
     function jsFile($params) {
