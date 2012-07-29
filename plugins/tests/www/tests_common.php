@@ -46,6 +46,7 @@ if (isset($GLOBALS['jpgraph_dir'])) {
 function __autoload($className) {
     global $Language;
     if (strpos($className, 'Zend') === 0 && !class_exists($className)) {
+        var_dump($classname, $GLOBALS['zend_path']);
         if (isset($GLOBALS['zend_path'])) {
             ini_set('include_path', $GLOBALS['zend_path'].':'.ini_get('include_path'));
             $path = str_replace('_', '/', $className);
