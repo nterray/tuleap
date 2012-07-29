@@ -43,6 +43,7 @@ if (isset($GLOBALS['jpgraph_dir'])) {
  *
  * @return void
  */
+var_dump(__FILE__);
 function __autoload($className) {
     global $Language;
     if (strpos($className, 'Zend') === 0 && !class_exists($className)) {
