@@ -11,6 +11,7 @@ before_script:
     - sudo dpkg -i --force-all libphp-jpgraph-tuleap_2.3.4-1_all.deb
     - pear install Mail_mimeDecode
     - sed -i "s#/etc#$PWD#" $PWD/src/etc/local.inc.dist
+    - sed -i "s#/usr/share/zend#$PWD/Zend#" $PWD/src/etc/local.inc.dist
     - mkdir -p $PWD/codendi/plugins/IM/etc/
     - cp $PWD/plugins/IM/include/jabbex_api/installation/resources/jabbex_conf.tpl.xml $PWD/codendi/plugins/IM/etc/jabbex_conf.xml
     - phpenv rehash
