@@ -46,7 +46,7 @@ class BrowserIDPlugin extends Plugin {
     }
 
     function jsFile($params) {
-        echo '<script src="https://browserid.org/include.js" type="text/javascript"></script>';
+        echo '<script src="https://login.persona.org/include.js" type="text/javascript"></script>';
         echo '<script type="text/javascript" src="'.$this->getPluginPath().'/script.js"></script>'."\n";
     }
 
@@ -75,6 +75,8 @@ class BrowserIDPlugin extends Plugin {
                 } else {
                     $this->userDoesNotExist();
                 }
+            } else {
+                echo json_encode(array("error" => $this->getError()));
             }
         }
     }
@@ -113,25 +115,30 @@ class BrowserIDPlugin extends Plugin {
     }
 
     private function checkAssertion($assertion) {
-        $url = 'https://browserid.org/verify';
+        $url = 'https://verifier.login.persona.org/verify';
         $fields = array(
             'assertion' => $assertion,
             'audience'  => Config::get('sys_default_domain'),
         );
         $fields_string = http_build_query($fields);
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, count($fields));
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $result = curl_exec($ch);
-        curl_close($ch);
+        $this->ch = curl_init();
+        curl_setopt($this->ch, CURLOPT_URL, $url);
+        curl_setopt($this->ch, CURLOPT_POST, count($fields));
+        curl_setopt($this->ch, CURLOPT_POSTFIELDS, $fields_string);
+        curl_setopt($this->ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($this->ch);
+        //curl_close($ch);
 
         $json_result = json_decode($result);
-        if ($json_result->status === 'okay') {
+        if ($json_result && $json_result->status === 'okay') {
             return $json_result;
         }
+    }
+    
+    private function getError() {
+        return curl_error($this->ch);
     }
 }
 

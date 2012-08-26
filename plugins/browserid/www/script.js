@@ -1,48 +1,42 @@
+var tuleap = tuleap || { };
+tuleap.browserid = tuleap.browserid || { };
+tuleap.browserid.currentUser = tuleap.browserid.currentUser || null;
+
 document.observe('dom:loaded', function () {
-    function identity(assertion) {
-        if (assertion) {
-            // This code will be invoked once the user has
-            // successfully selected an email address they
-            // control to sign in with.
-            checkAssertion(assertion);
+    function handleResponse(transport) {
+        var json = transport.responseJSON;
+        if (json) {
+            if (json.realname) {
+                loggedIn(json.realname);
+            } else if (json.choose_user) {
+                chooseUser(json.choose_user, json.assertion);
+            } else if (json.redirect) {
+                window.location.href = json.redirect;
+            } else if (json.error) {
+                alert(json.error);
+            }
         } else {
-            // something went wrong! the user isn't logged in.
             loggedOut();
         }
-     }
-
-     function handleResponse(transport) {
-         var json = transport.responseJSON;
-         if (json) {
-             if (json.realname) {
-                 loggedIn(json.realname);
-             } else if (json.choose_user) {
-                 chooseUser(json.choose_user, json.assertion);
-             } else if (json.redirect) {
-                 window.location.href = json.redirect;
-             }
-         } else {
-             loggedOut();
-         }
-     }
-
-     function checkAssertion(assertion) {
-        new Ajax.Request('/plugins/browserid/', {
-            method: 'POST',
-            parameters: { assertion: assertion },
-            onSuccess: handleResponse,
-            onFailure: function (transport) {
-                alert('Login failure');
-            }
-        });
-     }
-
-     function chooseUser(users, assertion) {
-         var choice = promptUsers(users, assertion);
-         if (choice) {
-            userMadeItsChoice(choice, assertion);
-         }
-     }
+    }
+    
+    function checkAssertion(assertion) {
+       new Ajax.Request('/plugins/browserid/', {
+           method: 'POST',
+           parameters: { assertion: assertion },
+           onSuccess: handleResponse,
+           onFailure: function (transport) {
+               alert('Login failure');
+           }
+       });
+    }
+    
+    function chooseUser(users, assertion) {
+        var choice = promptUsers(users, assertion);
+        if (choice) {
+           userMadeItsChoice(choice, assertion);
+        }
+    }
 
     function userMadeItsChoice(user_id, assertion) {
         new Ajax.Request('/plugins/browserid/', {
@@ -90,23 +84,30 @@ document.observe('dom:loaded', function () {
                 alert.down('.modal-body').insert(p);
             }
         );
-        jQuery(alert).modal();
+        document.body.insert(alert);
+        jQuery(alert).modal("show");
     }
 
-     function loggedIn(realname) {
-         //alert('Welcome '+realname);
-         window.location.reload();
-     }
+    function loggedIn(realname) {
+        alert('Welcome '+realname);
+        //window.location.reload();
+    }
+    
+    function loggedOut() {
+        alert('You are logged out');
+    }
+    
+    navigator.id.watch({
+         loggedInEmail: tuleap.browserid.currentUser,
+         onlogin: checkAssertion,
+         onlogout: loggedOut
+    });
 
-     function loggedOut() {
-         alert('You are logged out');
-     }
-
-     $$('a[href="/account/login.php"]').each(function (login_button) {
-         login_button.observe('click', function (evt) {
-            navigator.id.get(identity);
-            Event.stop(evt);
-            return false;
-         });
-     });
+    $$('a[href="/account/login.php"]').each(function (login_button) {
+        login_button.observe('click', function (evt) {
+           navigator.id.request();
+           Event.stop(evt);
+           return false;
+        });
+    });
 });
